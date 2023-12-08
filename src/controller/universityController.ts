@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import University from "../entities/university/University"
-import Department from "../entities/university/Department";
 class UniversityController{
 
     async getAllUnis(request: Request, response: Response) {
