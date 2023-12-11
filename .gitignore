@@ -2,3 +2,4 @@
 node_modules/
 mongoConn.env
 .idea/
+./dist
