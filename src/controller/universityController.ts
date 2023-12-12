@@ -4,7 +4,7 @@ class UniversityController{
 
     async getAllUnis(request: Request, response: Response) {
         try {
-            const unis = await University.find();
+            const unis = await University.find().populate('departmentList');
             response.json(unis);
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
@@ -14,7 +14,7 @@ class UniversityController{
     async getUniById(request: Request, response: Response){
         const uniId = request.params.id;
         try {
-            const university = await University.findById(uniId);
+            const university = await University.findById(uniId).populate('departmentList');
             if (university) {
                 response.json(university);
             } else {

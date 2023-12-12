@@ -31,7 +31,7 @@ class PersonController{
         const newPerson = new Person({
             name,
             age,
-            role
+            role,
         })
         try {
             const createdPerson = await newPerson.save();

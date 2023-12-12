@@ -6,6 +6,12 @@ const universitySchema = new Schema<IUniversity>({
     location: {type: String, required: true},
     departmentList: [{type: Schema.ObjectId, ref:"Department"}]
 })
+universitySchema.pre(/^find/, function(next){
+    this.populate({
+        path: 'departmentList'
+    })
+    next();
+})
 
 const University = model('University', universitySchema);
 export default University;

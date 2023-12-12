@@ -21,3 +21,12 @@ export interface IUniversity{
     location: string,
     departmentList: IDepartment[]
 }
+export interface ILibrary{
+    bookList: IBook[],
+    university: string
+}
+export interface IBook{
+    name: string,
+    type: string,
+    isRetired: boolean,
+}
