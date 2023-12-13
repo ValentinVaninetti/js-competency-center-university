@@ -5,7 +5,7 @@ class DepartmentController{
     async getAllDepartments(request: Request, response: Response){
         try {
             const departments = await Department.find();
-            response.json(departments);
+            response.status(200).json({message:"Success", data:departments});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -16,7 +16,7 @@ class DepartmentController{
         try {
             const department = await Department.findById(departmentId);
             if (department) {
-                response.json(department);
+                response.status(200).json({message:"Success", data:department});
             } else {
                 response.status(404).json({ message: 'Department not found' });
             }
@@ -26,35 +26,25 @@ class DepartmentController{
     }
 
     async createDepartment(request: Request, response: Response){
-        const {type, majorList} = request.body;
-
-        const newDepartmnet = new Department({
-            type,
-            majorList:[],
-        })
         try {
-            const createdDepartment = await newDepartmnet.save();
-            response.json(createdDepartment);
+            const createdDepartment = await Department.create(request.body);
+            response.status(201).json({status:"Success", data:createdDepartment});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updateDepartment(request: Request, response: Response){
-        const departmentId = request.params.id;
-        const { type, majorList } = request.body;
-
         try {
             const editedDepartment = await Department.findByIdAndUpdate(
-                departmentId,
-                { type, majorList },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedDepartment) {
-                response.json(editedDepartment);
+                response.status(200).json({status: "Success", data: editedDepartment});
             } else {
-                response.status(404).json({ message: 'Department not found' });
+                response.status(404).json({ message: 'University not found' });
             }
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
@@ -68,7 +58,7 @@ class DepartmentController{
             const deletedDepartment = await Department.findByIdAndDelete(departmentId);
 
             if (deletedDepartment) {
-                response.json(deletedDepartment);
+                response.status(204).json({status:"Success", data: deletedDepartment});
             } else {
                 response.status(404).json({ message: 'Department not found' });
             }

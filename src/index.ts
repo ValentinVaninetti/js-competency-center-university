@@ -7,6 +7,7 @@ import majorRouter from "./routes/major.router";
 import departmentRouter from "./routes/department.router";
 import courseRouter from "./routes/course.router";
 import personRouter from "./routes/person.router";
+import libraryRouter from "./routes/Library.router";
 
 dotenv.config()
 const app: Application = express();
@@ -22,7 +23,8 @@ app.use('/api/university', universityRouter);
 app.use('/api/major', majorRouter);
 app.use('/api/department', departmentRouter);
 app.use('/api/course', courseRouter);
-app.use('/api/person', personRouter)
+app.use('/api/person', personRouter);
+app.use('/api/library', libraryRouter);
 const start = async () => {
     try {
         await mongoose.connect(process.env.DB_CONN_STRING);

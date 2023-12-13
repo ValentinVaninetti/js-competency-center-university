@@ -4,8 +4,8 @@ class UniversityController{
 
     async getAllUnis(request: Request, response: Response) {
         try {
-            const unis = await University.find();
-            response.json(unis);
+            const unis = await University.find()
+            response.status(200).json({message:"Success", data:unis});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -14,9 +14,9 @@ class UniversityController{
     async getUniById(request: Request, response: Response){
         const uniId = request.params.id;
         try {
-            const university = await University.findById(uniId);
+            const university = await University.findById(uniId)
             if (university) {
-                response.json(university);
+                response.status(200).json({message: "Success", data: university});
             } else {
                 response.status(404).json({ message: 'University not found' });
             }
@@ -25,35 +25,23 @@ class UniversityController{
         }
     }
     async createUni(request: Request, response: Response) {
-        const { name, location, departmentList }= request.body;
-
-        const newUniversity = new University({
-            name,
-            location,
-            departmentList:[],
-        });
-
         try {
-            const createdUniversity = await newUniversity.save();
-            response.json(createdUniversity);
+            const createdUniversity = await University.create(request.body);
+            response.status(201).json({status:"Success", data:createdUniversity});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updateUni(request: Request, response: Response) {
-        const uniId = request.params.id;
-        const { name, location, departmentList } = request.body;
-
         try {
             const editedUniversity = await University.findByIdAndUpdate(
-                uniId,
-                { name, location, departmentList },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedUniversity) {
-                response.json(editedUniversity);
+                response.status(200).json({status: "Success", data: editedUniversity});
             } else {
                 response.status(404).json({ message: 'University not found' });
             }
@@ -69,8 +57,7 @@ class UniversityController{
             const deletedUniversity = await University.findByIdAndDelete(universityId);
 
             if (deletedUniversity) {
-                response.json(deletedUniversity);
-            } else {
+                response.status(204).json({status:"Success", data:deletedUniversity});
                 response.status(404).json({ message: 'University not found' });
             }
         } catch (error) {

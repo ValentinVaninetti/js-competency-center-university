@@ -1,12 +1,11 @@
 import {Request, Response} from "express";
 import Major from "../entities/university/Major";
-import University from "../entities/university/University";
 
 class MajorControllerr{
     async getAllMajors(request: Request, response: Response){
         try {
             const majors = await Major.find();
-            response.json(majors);
+            response.status(200).json({message:"Success", data:majors});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -17,7 +16,7 @@ class MajorControllerr{
         try {
             const major = await Major.findById(majorId);
             if (major) {
-                response.json(major);
+                response.status(200).json({message:"Success", data:major});
             } else {
                 response.status(404).json({ message: 'Major not found' });
             }
@@ -27,35 +26,25 @@ class MajorControllerr{
     }
 
     async createMajor(request: Request, response: Response){
-        const {name, courseList} = request.body;
-
-        const newMajor = new Major({
-            name,
-            courseList:[],
-        })
         try {
-            const createdMajor = await newMajor.save();
-            response.json(createdMajor);
+            const createdMajor = await Major.create(request.body);
+            response.status(201).json({status:"Success", data:createdMajor});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updateMajor(request: Request, response: Response){
-        const majorId = request.params.id;
-        const { name, courseList } = request.body;
-
         try {
             const editedMajor = await Major.findByIdAndUpdate(
-                majorId,
-                { name, courseList },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedMajor) {
-                response.json(editedMajor);
+                response.status(200).json({status: "Success", data: editedMajor});
             } else {
-                response.status(404).json({ message: 'Major not found' });
+                response.status(404).json({ message: 'University not found' });
             }
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
@@ -69,7 +58,7 @@ class MajorControllerr{
             const deletedMajor = await Major.findByIdAndDelete(majorId);
 
             if (deletedMajor) {
-                response.json(deletedMajor);
+                response.status(204).json({status:"Success", data:deletedMajor});
             } else {
                 response.status(404).json({ message: 'Major not found' });
             }

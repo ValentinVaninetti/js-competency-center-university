@@ -5,7 +5,7 @@ class PersonController{
     async getAllPersons(request: Request, response: Response){
         try {
             const persons = await Person.find();
-            response.json(persons);
+            response.status(200).json({message:"Success", data:persons});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -16,7 +16,7 @@ class PersonController{
         try {
             const person = await Person.findById(personId);
             if (person) {
-                response.json(person);
+                response.status(200).json({message:"Success", data:person});
             } else {
                 response.status(404).json({ message: 'Person not found' });
             }
@@ -26,36 +26,25 @@ class PersonController{
     }
 
     async createPerson(request: Request, response: Response){
-        const {name, age, role} = request.body;
-
-        const newPerson = new Person({
-            name,
-            age,
-            role
-        })
         try {
-            const createdPerson = await newPerson.save();
-            response.json(createdPerson);
+            const createPerson = await Person.create(request.body);
+            response.status(201).json({status:"Success", data:createPerson});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updatePerson(request: Request, response: Response){
-        const personId = request.params.id;
-        const { name, age, role } = request.body;
-
         try {
             const editedPerson = await Person.findByIdAndUpdate(
-                personId,
-                { name, age, role },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedPerson) {
-                response.json(editedPerson);
+                response.status(200).json({status: "Success", data: editedPerson});
             } else {
-                response.status(404).json({ message: 'Person not found' });
+                response.status(404).json({ message: 'University not found' });
             }
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
@@ -69,7 +58,7 @@ class PersonController{
             const deletedPerson = await Person.findByIdAndDelete(personId);
 
             if (deletedPerson) {
-                response.json(deletedPerson);
+                response.status(204).json({status:"Success", data:deletedPerson});
             } else {
                 response.status(404).json({ message: 'Person not found' });
             }
