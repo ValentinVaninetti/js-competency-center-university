@@ -5,7 +5,7 @@ class CourseController{
     async getAllCourses(request: Request, response: Response){
         try {
             const courses = await Course.find();
-            response.json(courses);
+            response.status(200).json({message:"Success", data:courses});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -16,7 +16,7 @@ class CourseController{
         try {
             const course = await Course.findById(courseId);
             if (course) {
-                response.json(course);
+                response.status(200).json({message:"Success", data:course});
             } else {
                 response.status(404).json({ message: 'Course not found' });
             }
@@ -26,36 +26,25 @@ class CourseController{
     }
 
     async createCourse(request: Request, response: Response){
-        const {courseName, personList, hoursPerWeek} = request.body;
-
-        const newCourse = new Course({
-            courseName,
-            personList:[],
-            hoursPerWeek
-        })
         try {
-            const createdCourse = await newCourse.save();
-            response.json(createdCourse);
+            const createdCourse = await Course.create(request.body);
+            response.status(201).json({status:"Success", data:createdCourse});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updateCourse(request: Request, response: Response){
-        const courseId = request.params.id;
-        const { courseName, personList, hoursPerWeek } = request.body;
-
         try {
             const editedCourse = await Course.findByIdAndUpdate(
-                courseId,
-                { courseName, personList, hoursPerWeek },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedCourse) {
-                response.json(editedCourse);
+                response.status(200).json({status: "Success", data: editedCourse});
             } else {
-                response.status(404).json({ message: 'Course not found' });
+                response.status(404).json({ message: 'University not found' });
             }
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
@@ -69,7 +58,7 @@ class CourseController{
             const deletedCourse = await Course.findByIdAndDelete(courseId);
 
             if (deletedCourse) {
-                response.json(deletedCourse);
+                response.status(204).json({status:"Success", data:deletedCourse});
             } else {
                 response.status(404).json({ message: 'Course not found' });
             }

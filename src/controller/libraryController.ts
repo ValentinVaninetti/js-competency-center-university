@@ -5,7 +5,7 @@ class LibraryController{
     async getAllLibraries(request: Request, response: Response) {
         try {
             const libraries = await Library.find().populate('bookList');
-            response.json(libraries);
+            response.status(200).json({message:"Success", data:libraries});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
@@ -16,7 +16,7 @@ class LibraryController{
         try {
             const library = await Library.findById(libraryId).populate('bookList');
             if (library) {
-                response.json(library);
+                response.status(200).json({message:"Success", data:library});
             } else {
                 response.status(404).json({ message: 'University not found' });
             }
@@ -25,34 +25,23 @@ class LibraryController{
         }
     }
     async createLibrary(request: Request, response: Response) {
-        const { bookList, university }= request.body;
-
-        const newLibrary = new Library({
-            bookList:[],
-            university
-        });
-
         try {
-            const createdLibrary = await newLibrary.save();
-            response.json(createdLibrary);
+            const createdLibrary = await Library.create(request.body);
+            response.status(201).json({status:"Success", data:createdLibrary});
         } catch (error) {
             response.status(500).json({ message: 'Internal Server Error' });
         }
     }
 
     async updateLibrary(request: Request, response: Response) {
-        const libraryId = request.params.id;
-        const { bookList, university } = request.body;
-
         try {
             const editedLibrary = await Library.findByIdAndUpdate(
-                libraryId,
-                {bookList, university },
+                request.params.id,
+                request.body,
                 { new: true }
             );
-
             if (editedLibrary) {
-                response.json(editedLibrary);
+                response.status(200).json({status: "Success", data: editedLibrary});
             } else {
                 response.status(404).json({ message: 'University not found' });
             }
@@ -68,7 +57,7 @@ class LibraryController{
             const deletedLibrary = await Library.findByIdAndDelete(libraryID);
 
             if (deletedLibrary) {
-                response.json(deletedLibrary);
+                response.status(200).json({status:"Success", data:deletedLibrary});
             } else {
                 response.status(404).json({ message: 'University not found' });
             }
